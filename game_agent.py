@@ -35,7 +35,15 @@ def custom_score(game, player):
         The heuristic value of the current game state to the specified player.
     """
     # TODO: finish this function!
-    raise NotImplementedError
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    return float(own_moves - opp_moves)
 
 
 def custom_score_2(game, player):
@@ -61,7 +69,15 @@ def custom_score_2(game, player):
         The heuristic value of the current game state to the specified player.
     """
     # TODO: finish this function!
-    raise NotImplementedError
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    return float(own_moves - 10* opp_moves)
 
 
 def custom_score_3(game, player):
@@ -87,7 +103,15 @@ def custom_score_3(game, player):
         The heuristic value of the current game state to the specified player.
     """
     # TODO: finish this function!
-    raise NotImplementedError
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    return float(own_moves - 100* opp_moves)
 
 
 class IsolationPlayer:
@@ -301,18 +325,18 @@ class AlphaBetaPlayer(IsolationPlayer):
             v = (float("-inf"), (-1,-1))
             for each_move in legal_player_moves:
                 v = max([v, (self.alphabeta_eval(game.forecast_move(each_move),depth-1, alpha, beta, False)[0], each_move)])
+                if beta <= v[0]:
+                    return v
                 alpha = max(alpha, v[0])
-                if beta <= alpha:
-                    break
             return v
 
         else:
             v = (float("inf"), (-1,-1))
             for each_move in legal_player_moves:
                 v = min([v, (self.alphabeta_eval(game.forecast_move(each_move),depth-1, alpha, beta, True)[0], each_move)])
+                if v[0] <= alpha:
+                    return v
                 beta = min(beta, v[0])
-                if beta <= alpha:
-                    break
             return v
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf")):
@@ -364,5 +388,5 @@ class AlphaBetaPlayer(IsolationPlayer):
             raise SearchTimeout()
 
         # TODO: finish this function!
-        return self.alphabeta_eval(game, depth, True)[1]
+        return self.alphabeta_eval(game, depth, alpha, beta, True)[1]
 
