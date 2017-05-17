@@ -10,7 +10,7 @@ class SearchTimeout(Exception):
     pass
 
 
-def custom_score(game, player):
+def custom_score(game, player, m_factor=1):
     """Calculate the heuristic value of a game state from the point of view
     of the given player.
 
@@ -43,7 +43,7 @@ def custom_score(game, player):
 
     own_moves = len(game.get_legal_moves(player))
     opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
-    return float(own_moves)
+    return float(own_moves - m_factor * opp_moves)
 
 
 def custom_score_2(game, player):
@@ -136,11 +136,12 @@ class IsolationPlayer:
         positive value large enough to allow the function to return before the
         timer expires.
     """
-    def __init__(self, search_depth=3, score_fn=custom_score, timeout=10.):
+    def __init__(self, search_depth=3, score_fn=custom_score, m_factor=1, timeout=10., *extra):
         self.search_depth = search_depth
         self.score = score_fn
         self.time_left = None
         self.TIMER_THRESHOLD = timeout
+        self.m_factor = m_factor
 
 
 class MinimaxPlayer(IsolationPlayer):
@@ -202,7 +203,7 @@ class MinimaxPlayer(IsolationPlayer):
         # Get legal moves to determine if it's terminal node
         legal_player_moves = game.get_legal_moves()
         if depth == 0 or len(legal_player_moves) == 0:
-            return self.score(game, self), (-1,-1)
+            return self.score(game, self, self.m_factor), (-1,-1)
 
         if maximizing_player:
             return max([(self.minimax_eval(game.forecast_move(each_move), depth-1, False)[0], each_move) for each_move in legal_player_moves])
@@ -319,7 +320,7 @@ class AlphaBetaPlayer(IsolationPlayer):
 
         legal_player_moves = game.get_legal_moves()
         if depth == 0 or len(legal_player_moves) == 0:
-            return self.score(game, self), (-1,-1)
+            return self.score(game, self, self.m_factor), (-1,-1)
 
         if maximizing_player:
             v = (float("-inf"), (-1,-1))

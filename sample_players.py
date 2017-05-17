@@ -39,7 +39,7 @@ def null_score(game, player):
     return 0.
 
 
-def open_move_score(game, player):
+def open_move_score(game, player, *args):
     """The basic evaluation function described in lecture that outputs a score
     equal to the number of moves open for your computer player on the board.
 
@@ -68,7 +68,7 @@ def open_move_score(game, player):
     return float(len(game.get_legal_moves(player)))
 
 
-def improved_score(game, player):
+def improved_score(game, player, *args):
     """The "Improved" evaluation function discussed in lecture that outputs a
     score equal to the difference in the number of moves available to the
     two players.
@@ -100,7 +100,7 @@ def improved_score(game, player):
     return float(own_moves - opp_moves)
 
 
-def center_score(game, player):
+def center_score(game, player, *args):
     """Outputs a score equal to square of the distance from the center of the
     board to the position of the player.
 
